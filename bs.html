@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informations Brawl Stars</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1e1e2e;
+            color: #ffffff;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+        header {
+            background-color: #282c34;
+            padding: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        header h1 {
+            font-size: 32px;
+            margin: 0;
+        }
+        main {
+            padding: 20px;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: none;
+        }
+        button {
+            background-color: #ffcc00;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #ffaa00;
+        }
+        #playerInfo {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #333;
+            display: none;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .info-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Informations sur le joueur Brawl Stars</h1>
+    </header>
+    <main>
+        <p>Pour obtenir les informations, entrez le tag du joueur.</p>
+        <p><strong>Comment trouver le tag du joueur :</strong> Ouvrez Brawl Stars, cliquez sur votre profil, et trouvez le tag affiché sous votre nom (ex: <code>#2ABC9XYZ</code>).</p>
+        <input type="text" id="playerTag" placeholder="#TagDuJoueur" maxlength="12">
+        <button onclick="getPlayerInfo()">Obtenir les informations</button>
+
+        <div id="playerInfo">
+            <h2>Informations du joueur</h2>
+            <p><span class="info-label">Nom :</span> <span id="playerName"></span></p>
+            <p><span class="info-label">Trophées :</span> <span id="playerTrophies"></span></p>
+            <p><span class="info-label">Niveau d'expérience :</span> <span id="playerExpLevel"></span></p>
+            <p><span class="info-label">Club :</span> <span id="playerClub"></span></p>
+        </div>
+    </main>
+
+    <script>
+        async function getPlayerInfo() {
+            const tag = document.getElementById("playerTag").value.replace('#', '%23');
+            const url = `https://api.brawlstars.com/v1/players/${tag}`;
+            const token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkxZmM1MmZmLWU2YzItNDYyMi05NzZlLTQ4MzM4MzE3OWVmYSIsImlhdCI6MTcyOTY5MTA2Miwic3ViIjoiZGV2ZWxvcGVyL2NhMjExZGNhLTgyNmEtODEy Mi0wZDBkLTI1YmUzZDMzOGY0NiIsInNjb3BlcyI6WyJicmF3bHN0YXJzIl0sImxpbWl0cyI6W3sidGllciI6ImRldmVsb3Blci9zaWx2ZXIiLCJ0eXBlIjoidGhyb3R0bGluZyJ9LHsiY2lkcnMiO lsiOTMuMzEuMTI5LjE4NCJdLCJ0eXBlIjoiY2xpZW50In1dfQ.a-YNQ505u8j_nqKUKqj2r45aS3TR9j368bPBJVtkjXM8lRJqLQM9XODTUhN0K1Adf3SSYr4uQcgvAKShG9l_CA"; // Remplacez par votre token API
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erreur lors de la récupération des données : ${response.status} ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                document.getElementById("playerName").innerText = data.name;
+                document.getElementById("playerTrophies").innerText = data.trophies;
+                document.getElementById("playerExpLevel").innerText = data.expLevel;
+                document.getElementById("playerClub").innerText = data.club ? data.club.name : 'Aucun';
+                document.getElementById("playerInfo").style.display = 'block';
+
+            } catch (error) {
+                alert('Erreur : ' + error.message);
+                console.error('Détails de l\'erreur :', error);
+                document.getElementById("playerInfo").style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
